@@ -2,7 +2,7 @@ var app;
 window.onload = function () {
     app = new t3d.App({
         el: "div3d",
-        skyBox:'SunCloud',
+        skyBox:'BlueSky',
         url: "https://speech.uinnova.com/static/models/dBuilding",
         complete: function () {
             console.log("app scene loaded");
