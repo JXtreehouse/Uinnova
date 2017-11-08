@@ -146,12 +146,13 @@ function ShowAllFloor() {
     for (var i = 0; i < node.length; i++) {
         node[i].visible = true;
     }
-    ubPOS=app.buildings[0].position;
-    app.camera.flyTo({
-        position: [ubPOS[0], ubPOS[1]+27.64, ubPOS[2]-50],
-        target: [ubPOS[0],ubPOS[1],ubPOS[2]],
-        time: 1200
-    });
+    // ubPOS=app.buildings[0].position;
+    // app.camera.flyTo({
+    //     position: [ubPOS[0], ubPOS[1]+27.64, ubPOS[2]-50],
+    //     target: [ubPOS[0],ubPOS[1],ubPOS[2]],
+    //     time: 1200
+    // });
+    app.camera.flyTo({target:app.buildings[0]});
 }
 
 // 仅显示/聚焦某层
@@ -188,11 +189,12 @@ function ShowThisFloor(number) {
 
 // 摄像机飞向目标点
 function flytoTarget(number) {
-    app.camera.flyTo({
-        position: [ubPOS[0], ubPOS[1]+12.28 + ( number - 1 ) * 2.5,  ubPOS[2]-27.82],
-        target: [ubPOS[0], ubPOS[1] + ( number - 1 ) * 6, ubPOS[2]+15.76],
-        time: 1200
-    });
+    // app.camera.flyTo({
+    //     position: [ubPOS[0], ubPOS[1]+12.28 + ( number - 1 ) * 2.5,  ubPOS[2]-27.82],
+    //     target: [ubPOS[0], ubPOS[1] + ( number - 1 ) * 6, ubPOS[2]+15.76],
+    //     time: 1200
+    // });
+    app.camera.flyTo({target:app.buildings[0]});
 }
 var guis = new Array();
 // 生成样式
