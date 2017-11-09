@@ -6,7 +6,6 @@ window.onload = function () {
         url: "https://speech.uinnova.com/static/models/dBuilding",
         complete: function () {
             console.log("app scene loaded");
-            
             ShowAllFloor();
             /* 显示所有楼层 */
             ClickButtons();
@@ -146,13 +145,13 @@ function ShowAllFloor() {
     for (var i = 0; i < node.length; i++) {
         node[i].visible = true;
     }
-    // ubPOS=app.buildings[0].position;
-    // app.camera.flyTo({
-    //     position: [ubPOS[0], ubPOS[1]+27.64, ubPOS[2]-50],
-    //     target: [ubPOS[0],ubPOS[1],ubPOS[2]],
-    //     time: 1200
-    // });
-    app.camera.flyTo({target:app.buildings[0]});
+    ubPOS=app.buildings[0].position;
+    app.camera.flyTo({
+        position: [ubPOS[0], ubPOS[1]+27.64, ubPOS[2]-50],
+        target: [ubPOS[0],ubPOS[1],ubPOS[2]],
+        time: 1200
+    });
+    // app.camera.flyTo({target:app.buildings[0]});
 }
 
 // 仅显示/聚焦某层
@@ -163,11 +162,10 @@ function ShowThisFloor(number) {
     
     // 隐藏消防栓等
     // var temp = app.query({propKey: "物体类型"});
-    var temp = app.query('[物体类型]');
-    temp.objects.forEach(function (obj) {
-        obj.visible = false;
-    });
-    
+    // var temp = app.query('[物体类型]');
+    // temp.objects.forEach(function (obj) {
+    //     obj.visible = false;
+    // });
     
     /* 控制 app.buildings[0].node.children[0]的 children 显隐更靠谱 */
     var node = app.buildings[0].node.children[0].children;
@@ -189,12 +187,12 @@ function ShowThisFloor(number) {
 
 // 摄像机飞向目标点
 function flytoTarget(number) {
-    // app.camera.flyTo({
-    //     position: [ubPOS[0], ubPOS[1]+12.28 + ( number - 1 ) * 2.5,  ubPOS[2]-27.82],
-    //     target: [ubPOS[0], ubPOS[1] + ( number - 1 ) * 6, ubPOS[2]+15.76],
-    //     time: 1200
-    // });
-    app.camera.flyTo({target:app.buildings[0]});
+    app.camera.flyTo({
+        position: [ubPOS[0], ubPOS[1]+12.28 + ( number - 1 ) * 2.5,  ubPOS[2]-27.82],
+        target: [ubPOS[0], ubPOS[1] + ( number - 1 ) * 6, ubPOS[2]+15.76],
+        time: 1200
+    });
+    // app.camera.flyTo({target:app.buildings[0].floors[number]});
 }
 var guis = new Array();
 // 生成样式
@@ -254,6 +252,10 @@ function CreateUI(propValue, offsetX, offsetY) {
     // var sel1 = app.query({propKey: "物体类型", propValue: propValue});
     var sel1 = app.query('[物体类型='+propValue+']');
     sel1.objects.forEach(function (v) {
+    
+        // var newDiv = CreateStyle(propValue).domElement;
+        // document.body.insertBefore(newDiv, srcElem);
+        // v.addUI(newDiv, [offsetX, offsetY]);
         app.create({
             type: 'UI',
             el: CreateStyle(propValue).domElement,
