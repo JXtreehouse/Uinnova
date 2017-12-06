@@ -3,7 +3,9 @@ window.onload = function () {
     app = new t3d.App({
         el: "div3d",
         skyBox:'BlueSky',
-        url: "https://speech.uinnova.com/static/models/dBuilding",
+        // url: "https://speech.uinnova.com/static/models/dBuilding",
+        url: "https://speech.uinnova.com/static/models/uinnova",
+        ak:'app_test_key',
         complete: function () {
             console.log("app scene loaded");
             ShowAllFloor();
@@ -67,6 +69,10 @@ function clickFloorButton(btnID) {
     }
 }
 
+// 点击2D
+function click2DBtn() {
+    
+}
 // 点击显示全部楼层的按钮
 function clickAllFloorButton() {
     
@@ -77,20 +83,22 @@ function clickAllFloorButton() {
         app.camera.orbit.enableRotate = true;
     }
 }
-
+var canClick=true;
 // 点击警报按钮
 function clickWarningButton() {
-    
     // 弹出框
     var btn = document.getElementById('WarningBtn');
     btn.onclick = function () {
-        setTimeout("alertWindow()", 3000);
-        app.camera.orbit.enableRotate = true;
+        if(canClick){
+            canClick=false;
+            setTimeout("alertWindow()", 3000);
+            app.camera.orbit.enableRotate = true;
+        }
     }
     
 }
-
 function alertWindow() {
+    canClick=true;
     alertMsg("检测到异常，是否查看", 1, "Warning");
 }
 
@@ -108,15 +116,19 @@ function Warning() {
     // var objs = app.query({propKey: "物体类型", propValue: objName[rnd(0, objName.length - 1)]});
     var objs = app.query('[物体类型='+objName[rnd(0, objName.length - 1)]+']')
     var obj = objs[0];
+    // console.log(obj);
     img = document.getElementById('imageTest');
-    //img.style.display = 'block';
-    var ui = app.create({
-        type: 'UI',
-        el: img,
-        offset: [-30, -30],
-        parent: obj
+    img.style.zIndex=1;
+    var tt = app.create({
+        type: 'Box',
+        width: 0.1,
+        height: 0.1,
+        depth: 0.1,
+        position:obj.position,
     });
-    console.log(ui);
+    var box = new THREE.Box3().setFromObject(tt.node);
+    tt.addUI(img, [0.5, box.getSize().y-2.5, 0 ],[0.2,1]);
+    var result = app.camera.worldToScreen(tt.position);
     var i = 0;
     clearInterval(timer);
     timer = setInterval(function () {
@@ -153,19 +165,37 @@ function ShowAllFloor() {
     });
     // app.camera.flyTo({target:app.buildings[0]});
 }
-
+// 2D Camera
+function Change3D ( bool ) {
+    // 防止旋转时候中断的bug
+    app.camera.orbit.enabled = true;
+    // 获取场景的大小
+    var box = new THREE.Box3().setFromObject(app._real.scene);
+    var offsetFactor = [0,1,0];
+    var radius = box.getSize().length();//lenght 返回的是对角线长
+    var center = box.getCenter();
+    var eyePos = [];
+    radius = _clamp(radius,4,1000);
+    if (!bool) {
+        eyePos = [center.x + radius * offsetFactor[0], center.y + radius * offsetFactor[1], center.z + radius * offsetFactor[2] ];
+        eyePos.y = _clamp(eyePos.y, 10, 1000);
+        app.camera.orbit.enableRotate = false;//2d 时候关闭旋转
+    } else {
+        offsetFactor = [0.5,0.5,0.5];
+        eyePos = [center.x + radius * offsetFactor[0], center.y + radius * offsetFactor[1], center.z + radius * offsetFactor[2] ];
+        app.camera.orbit.enableRotate = true;
+    }
+    app.camera.flyTo({
+        position: eyePos,
+        target: [center.x,center.y,center.z],
+        time: 800 // 耗时毫秒
+    });
+}
 // 仅显示/聚焦某层
 function ShowThisFloor(number) {
     
     // 隐藏建筑最外层
     app.buildings[0].node.children[1].visible = false;
-    
-    // 隐藏消防栓等
-    // var temp = app.query({propKey: "物体类型"});
-    // var temp = app.query('[物体类型]');
-    // temp.objects.forEach(function (obj) {
-    //     obj.visible = false;
-    // });
     
     /* 控制 app.buildings[0].node.children[0]的 children 显隐更靠谱 */
     var node = app.buildings[0].node.children[0].children;
@@ -176,11 +206,11 @@ function ShowThisFloor(number) {
     if (number === 1) {
         node[0].visible = true;
         node[1].visible = true;
-        app.buildings[0].floors[0].roofNodes[0].visible = false;
-        app.buildings[0].floors[1].roofNodes[0].visible = false;
+        app.buildings[0].floors[0].roofNode.visible = false;
+        app.buildings[0].floors[1].roofNode.visible = false;
     } else {
         node[number].visible = true;
-        app.buildings[0].floors[number].roofNodes[0].visible = false;
+        app.buildings[0].floors[number].roofNode.visible = false;
     }
     flytoTarget(number);
 }
@@ -252,17 +282,27 @@ function CreateUI(propValue, offsetX, offsetY) {
     // var sel1 = app.query({propKey: "物体类型", propValue: propValue});
     var sel1 = app.query('[物体类型='+propValue+']');
     sel1.objects.forEach(function (v) {
-    
-        // var newDiv = CreateStyle(propValue).domElement;
-        // document.body.insertBefore(newDiv, srcElem);
-        // v.addUI(newDiv, [offsetX, offsetY]);
-        app.create({
-            type: 'UI',
-            el: CreateStyle(propValue).domElement,
-            offset: [offsetX, offsetY],
-            parent: v
-        });
+        var box = new THREE.Box3().setFromObject(v.node);
+        v.addUI(CreateStyle(propValue).domElement, [0, box.getSize().y, 0 ],[0.2,1]);
+        var result = app.camera.worldToScreen(v.position);
+      
     });
+}
+/*获取元素的纵坐标*/
+function getTop(e){
+    var offset=e.offsetTop;
+    if(e.offsetParent!=null){
+        offset+=getTop(e.offsetParent);
+    }
+    return offset;
+}
+/*获取元素的横坐标*/
+function getLeft(e){
+    var offset=e.offsetLeft;
+    if(e.offsetParent!=null){
+        offset+=getLeft(e.offsetParent);
+    }
+    return offset;
 }
 
 // 控制界面
