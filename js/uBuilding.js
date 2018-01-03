@@ -31,6 +31,7 @@ function init() {
     uBuilding.show2 = true;
     uBuilding.show3 = true;
     uBuilding.canClick=true;
+    
 }
 /* 创建导航面板 */
 var guiMd;
@@ -75,13 +76,6 @@ function guiFunction() {
             if(uBuilding.canClick){
                 uBuilding.canClick=false;
                 setTimeout("alertWindow()", 50);
-                app.camera.orbit.enableRotate = true;
-                if(v5_3D != null){
-                    if(v5_3D.domElement != null){
-                        guiMd.removeFolder(v5_3D);
-                        v5_2D = guiMd.addTree('2D');
-                    }
-                }
             }
         } else if(o == '2D'){
             // 删除 2D 标签
@@ -166,6 +160,13 @@ var img;
 
 // 警报后
 function Warning() {
+    app.camera.orbit.enableRotate = true;
+    if(v5_3D != null){
+        if(v5_3D.domElement != null){
+            guiMd.removeFolder(v5_3D);
+            v5_2D = guiMd.addTree('2D');
+        }
+    }
     var objName = new Array();
     objName[0] = "消防栓";
     objName[1] = "消防水箱";
