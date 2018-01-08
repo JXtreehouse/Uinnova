@@ -172,7 +172,6 @@ function Warning() {
     objName[1] = "消防水箱";
     objName[2] = "排烟风机";
     
-    // var objs = app.query({propKey: "物体类型", propValue: objName[rnd(0, objName.length - 1)]});
     var objs = app.query('[物体类型='+objName[rnd(0, objName.length - 1)]+']')
     var obj = objs[0];
     // console.log(obj);
