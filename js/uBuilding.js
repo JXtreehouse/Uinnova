@@ -4,7 +4,7 @@ window.onload = function () {
         el: "div3d",
         skyBox:'BlueSky',
         // url: "https://speech.uinnova.com/static/models/uinnova",
-        url: "http://uinnova-model.oss-cn-beijing.aliyuncs.com/scenes/uinnova",
+        url: "https://uinnova-model.oss-cn-beijing.aliyuncs.com/scenes/uinnova",
         ak:'app_test_key',
         complete: function () {
             console.log("app scene loaded");
