@@ -216,7 +216,7 @@ function ShowAllFloor() {
     }
     ubPOS=app.buildings[0].position;
     app.camera.flyTo({
-        position: [ubPOS[0], ubPOS[1]+27.64, ubPOS[2]-50],
+        position: [ubPOS[0]+3, ubPOS[1]+43.21, ubPOS[2]+80],
         target: [ubPOS[0],ubPOS[1],ubPOS[2]],
         time: 1200
     });
@@ -262,7 +262,7 @@ function ShowThisFloor(number) {
 // 摄像机飞向目标点
 function flytoTarget(number) {
     app.camera.flyTo({
-        position: [ubPOS[0], ubPOS[1]+12.28 + ( number - 1 ) * 2.5,  ubPOS[2]-27.82],
+        position: [ubPOS[0]-3, ubPOS[1]+20.28 + ( number - 1 ) * 2.5,  ubPOS[2]+56],
         target: [ubPOS[0], ubPOS[1] + ( number - 1 ) * 6, ubPOS[2]+15.76],
         time: 1200
     });
