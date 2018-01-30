@@ -12,6 +12,8 @@ window.onload = function () {
             init();
             /* 显示所有楼层 */
             ShowAllFloor();
+            /* 引导提示 */
+            startIntro(ubuilding, 'folder');
         }
     });
 }
