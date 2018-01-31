@@ -13,7 +13,7 @@ window.onload = function () {
             /* 显示所有楼层 */
             ShowAllFloor();
             /* 引导提示 */
-            startIntro(ubuildingSteps, 'folder');
+            startIntro(ubuildingSteps);
         }
     });
 }
